@@ -35,7 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     Content: DataTypes.STRING,
     categoryId: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER
+    userId: DataTypes.INTEGER,
+    newsimage: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Post'
