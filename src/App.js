@@ -14,14 +14,16 @@ app.use(cors())
 app.use('/uploads', express.static('assets/uploads'))
 
 const userRoute = require('./routes/Users')
-const authRoute = require('./routes/auth')
-const postNewsRoute = require('./routes/PostsNews')
+const authRoute = require('./routes/Auth')
+const newsArticleRoute = require('./routes/NewsArticle')
 const categoryNewsRoute = require('./routes/CategoryNews')
+const tagNewsRoute = require('./routes/TagsNews')
 
 app.use('/auth', authRoute)
 app.use('/users', userRoute)
-app.use('/posts', postNewsRoute)
+app.use('/news', newsArticleRoute)
 app.use('/category', categoryNewsRoute)
+app.use('/tags', tagNewsRoute)
 
 app.get('/', (req, res) => {
   res.send({

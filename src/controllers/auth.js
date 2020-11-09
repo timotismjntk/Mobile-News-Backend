@@ -1,5 +1,5 @@
 /* eslint-disable node/handle-callback-err */
-const { User } = require('../models')
+const { Users } = require('../models')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const response = require('../helpers/response')
@@ -12,7 +12,7 @@ module.exports = {
     const { email, password } = req.body
     console.log(email)
     try {
-      const isExist = await User.findOne({ where: { email: email } })
+      const isExist = await Users.findOne({ where: { email: email } })
       if (isExist) {
         console.log(isExist.dataValues)
         if (isExist.dataValues.password) {
@@ -39,17 +39,18 @@ module.exports = {
     }
   },
   signUp: async (req, res) => {
-    let { name, birthdate, email, password, gender } = req.body
+    let { fullname, birthdate, email, password, gender } = req.body
     password = await bcrypt.hash(password, await bcrypt.genSalt())
     const data = {
-      name,
+      fullname,
       birthdate,
       email,
       password,
       gender,
       role_id: 2
     }
-    const results = await User.create(data)
+    console.log(data)
+    const results = await Users.create(data)
     return response(res, 'User created successfully', { results })
   }
   //   forgotPassword: async (req, res) => {

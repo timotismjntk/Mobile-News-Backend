@@ -1,12 +1,11 @@
 const response = require('../helpers/response')
 const multer = require('multer')
 const multerHelper = require('../helpers/multerHelper')
-const { User } = require('../models')
+const { Users } = require('../models')
 
 module.exports = {
   updateAvatar: (req, res) => {
     const { id } = req.user
-    console.log(id)
     multerHelper(req, res, async function (err) {
       try {
         if (err instanceof multer.MulterError) {
@@ -23,7 +22,7 @@ module.exports = {
         const data = {
           avatar: picture
         }
-        const results = await User.findByPk(id)
+        const results = await Users.findByPk(id)
         try {
           await results.update(data)
           return response(res, 'Avatar has been Upload successfully', data)

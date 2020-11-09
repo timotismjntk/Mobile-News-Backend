@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/auth')
 const CategoryNewsController = require('../controllers/CategoryNews')
 // const uploadAvatar = require('../controllers/uploadAvatar')
 
-// route.get('/', authMiddleware.authUser, CategoryNewsController.get)
+route.get('/', authMiddleware.authUser, CategoryNewsController.readAllCategory)
 // route.get('/:id', authMiddleware.authUser, CategoryNewsController.getUserById)
 route.post('/', authMiddleware.authUser, CategoryNewsController.createCategory)
 route.patch('/:id', authMiddleware.authUser, CategoryNewsController.editCategory)

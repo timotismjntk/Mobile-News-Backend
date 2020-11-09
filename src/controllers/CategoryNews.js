@@ -2,6 +2,10 @@ const response = require('../helpers/response')
 const { Category } = require('../models')
 
 module.exports = {
+  readAllCategory: async (req, res) => {
+    const results = await Category.findAll()
+    return response(res, 'List of All Category', { results })
+  },
   createCategory: async (req, res) => {
     const { name } = req.body
     const data = {

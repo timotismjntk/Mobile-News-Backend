@@ -11,12 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      // Tags.belongsTo(models.Post)
     }
   };
   Tags.init({
-    postId: DataTypes.INTEGER,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    postId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Tags'

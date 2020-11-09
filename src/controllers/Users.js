@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
 const bcrypt = require('bcryptjs')
 const response = require('../helpers/response')
-const { User } = require('../models')
+const { Users } = require('../models')
 
 module.exports = {
   getUsers: async (req, res) => {
-    const results = await User.findAll({
+    const results = await Users.findAll({
       offset: 0,
       limit: 1,
       attributes: {
@@ -16,7 +16,7 @@ module.exports = {
   },
   getUserById: async (req, res) => {
     const { id } = req.user
-    const results = await User.findByPk(id)
+    const results = await Users.findByPk(id)
     if (results) {
       return response(res, `Detail of user with id ${id}`, { results })
     }
@@ -25,7 +25,7 @@ module.exports = {
   updateUser: async (req, res) => {
     const { id } = req.user
     let { name, birthdate, email, password, phoneNumber, gender } = req.body
-    const results = await User.findByPk(id)
+    const results = await Users.findByPk(id)
     if (results) {
       if (name || birthdate || email || phoneNumber || gender) {
         const data = { name, birthdate, email, phoneNumber, gender }
@@ -59,7 +59,7 @@ module.exports = {
   },
   deleteUser: async (req, res) => {
     const { id } = req.user
-    const results = await User.findByPk(id)
+    const results = await Users.findByPk(id)
     if (results) {
       await results.destroy()
       return response(res, 'User deleted successfully', {})
