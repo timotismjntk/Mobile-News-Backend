@@ -15,7 +15,7 @@ module.exports = {
     return response(res, 'List of All User', { results })
   },
   getUserById: async (req, res) => {
-    const { id } = req.params
+    const { id } = req.user
     const results = await User.findByPk(id)
     if (results) {
       return response(res, `Detail of user with id ${id}`, { results })
@@ -23,7 +23,7 @@ module.exports = {
     return response(res, 'User not found', { results }, 404, false)
   },
   updateUser: async (req, res) => {
-    const { id } = req.params
+    const { id } = req.user
     let { name, birthdate, email, password, phoneNumber, gender } = req.body
     const results = await User.findByPk(id)
     if (results) {
@@ -58,7 +58,7 @@ module.exports = {
     return response(res, 'User not found', {}, 404, false)
   },
   deleteUser: async (req, res) => {
-    const { id } = req.params
+    const { id } = req.user
     const results = await User.findByPk(id)
     if (results) {
       await results.destroy()

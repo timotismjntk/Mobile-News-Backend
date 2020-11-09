@@ -15,9 +15,13 @@ app.use('/uploads', express.static('assets/uploads'))
 
 const userRoute = require('./routes/Users')
 const authRoute = require('./routes/auth')
+const postNewsRoute = require('./routes/PostsNews')
+const categoryNewsRoute = require('./routes/CategoryNews')
 
 app.use('/auth', authRoute)
 app.use('/users', userRoute)
+app.use('/posts', postNewsRoute)
+app.use('/category', categoryNewsRoute)
 
 app.get('/', (req, res) => {
   res.send({
