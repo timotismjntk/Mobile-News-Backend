@@ -7,7 +7,7 @@ module.exports = {
     return response(res, 'List of All Tags', { results })
   },
   createTags: async (req, res) => {
-    const { name } = req.body
+    const { name, postId } = req.body
     const data = {
       name
     }

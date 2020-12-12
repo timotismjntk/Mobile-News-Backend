@@ -11,15 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      // Users.belongsTo(models.News, [{
-      //   foreignKey: 'userId',
-      //   as: 'author'
-      // }])
-      // Users.belongsTo(models.News, [{
-      //   through: 'News',
-      //   foreignKey: 'userId',
-      //   as: 'authors'
-      // }])
+      Users.hasMany(models.News, {
+        foreignKey: 'userId'
+      })
+      Users.hasMany(models.Comments, {
+        foreignKey: 'readerId'
+      })
     }
   };
   Users.init({

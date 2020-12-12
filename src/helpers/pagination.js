@@ -1,39 +1,28 @@
 const qs = require('querystring')
-const {
-  APP_URL,
-  APP_PORT
-} = process.env
+const { APP_URL, APP_PORT } = process.env
 
-module.exports = (req, totalData) => {
-  let { page = 1, limit = 10 } = req.query
-  limit = parseInt(limit)
-  page = parseInt(page)
-  if (page < 1) {
-    page = 1
-  }
-  if (limit < 1 || limit > 100) {
-    limit = 5
-  }
-  const totalPage = Math.ceil(totalData / limit)
-  console.log(totalPage)
-
-  const path = req.originalUrl.slice(1).split('?')[0]
-  const prev = qs.stringify({ ...req.query, ...{ page: page - 1 } })
-  const next = qs.stringify({ ...req.query, ...{ page: page + 1 } })
-  console.log(path)
-  const prevLink = page > 1 ? `${APP_URL}:${APP_PORT}/${path}?${prev}` : null
-  const nextLink = page < totalPage ? `${APP_URL}:${APP_PORT}/${path}?${next}` : null
-
-  const offset = (page - 1) * limit
-  return {
-    offset,
-    pageInfo: {
-      currentPage: page,
-      totalPage,
-      totalData,
-      limitData: limit,
-      prevLink,
-      nextLink
+module.exports = {
+  pagination: (api, query, page, limit, count) => {
+    page = +page
+    const pageInfo = {
+      count: 0,
+      pages: 0,
+      currentPage: +page,
+      limitPerPage: +limit,
+      nextLink: null,
+      prevLink: null
     }
+
+    pageInfo.count = count
+    pageInfo.pages = Math.ceil(count / limit)
+    const { pages, currentPage } = pageInfo
+    if (currentPage < pages) {
+      pageInfo.nextLink = `${APP_URL}:${APP_PORT}${api}?${qs.stringify({ ...query, ...{ page: page + 1 } })}`
+    }
+
+    if (currentPage > 1) {
+      pageInfo.prevLink = `${APP_URL}:${APP_PORT}${api}?${qs.stringify({ ...query, ...{ page: page - 1 } })}`
+    }
+    return pageInfo
   }
 }

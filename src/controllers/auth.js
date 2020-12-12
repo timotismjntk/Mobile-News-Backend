@@ -4,13 +4,14 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const response = require('../helpers/response')
 const {
-  APP_KEY
+  APP_KEY,
+  TOKEN_EXP
 } = process.env
 
 module.exports = {
   login: async (req, res) => {
     const { email, password } = req.body
-    console.log(email)
+    console.log(req.body)
     try {
       const isExist = await Users.findOne({ where: { email: email } })
       if (isExist) {
@@ -19,8 +20,8 @@ module.exports = {
           try {
             await bcrypt.compare(password, isExist.dataValues.password, (err, result) => {
               if (result) {
-                jwt.sign({ id: isExist.dataValues.id, role_id: isExist.dataValues.role_id }, APP_KEY, (err, token) => {
-                  return response(res, { token: token }, {}, 200, true)
+                jwt.sign({ id: isExist.dataValues.id, role_id: isExist.dataValues.role_id }, APP_KEY, { expiresIn: TOKEN_EXP }, (err, token) => {
+                  return response(res, 'Login Success', { token }, 200, true)
                 })
               } else {
                 return response(res, 'Wrong email or password', {}, 400, false)
@@ -49,9 +50,14 @@ module.exports = {
       gender,
       role_id: 2
     }
-    console.log(data)
-    const results = await Users.create(data)
-    return response(res, 'User created successfully', { results })
+    const isExist = await Users.findOne({ where: { email: email } })
+    if (isExist) {
+      return response(res, 'Email has been used', 400, false)
+    } else {
+      console.log(data)
+      const results = await Users.create(data)
+      return response(res, 'User created successfully', { results })
+    }
   }
   //   forgotPassword: async (req, res) => {
   //     const schema = joi.object({

@@ -19,7 +19,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'categoryId',
         as: 'Category'
       })
-      News.hasOne(models.Tags, {
+      News.hasMany(models.Tags, {
+        foreignKey: 'postId'
+      })
+      News.hasMany(models.Likes, {
+        foreignKey: 'postId'
+      })
+      News.hasMany(models.Comments, {
         foreignKey: 'postId'
       })
     }
@@ -29,7 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.STRING,
     categoryId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
-    newsimage: DataTypes.STRING
+    newsimage: DataTypes.STRING,
+    readCount: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'News'

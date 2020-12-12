@@ -18,12 +18,23 @@ const authRoute = require('./routes/Auth')
 const newsArticleRoute = require('./routes/NewsArticle')
 const categoryNewsRoute = require('./routes/CategoryNews')
 const tagNewsRoute = require('./routes/TagsNews')
+const likesRoute = require('./routes/Likes')
+const commentRoute = require('./routes/Comments')
 
 app.use('/auth', authRoute)
 app.use('/users', userRoute)
 app.use('/news', newsArticleRoute)
 app.use('/category', categoryNewsRoute)
 app.use('/tags', tagNewsRoute)
+app.use('/likes', likesRoute)
+app.use('/comments', commentRoute)
+
+app.get('*', (req, res) => {
+  res.status(404).send({
+    success: false,
+    message: 'Error route not found'
+  })
+})
 
 app.get('/', (req, res) => {
   res.send({

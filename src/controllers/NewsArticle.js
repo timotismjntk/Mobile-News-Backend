@@ -1,20 +1,28 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 const response = require('../helpers/response')
-const paging = require('../helpers/pagination')
+const { pagination } = require('../helpers/pagination')
 const { Op } = require('sequelize')
-const { News, Users, Category, Tags } = require('../models')
+const { News, Users, Category, Tags, Likes } = require('../models')
 const multer = require('multer')
 const Sequelize = require('sequelize')
 const multerHelper = require('../helpers/multerHelperMultiple')
 
 module.exports = {
   readAllNews: async (req, res) => {
-    let { search, orderBy, offset = 0 } = req.query
-    const count = await News.count()
-    const page = paging(req, count)
-    const { pageInfo } = page
-    const { limitData } = pageInfo
+    let { limit, page, search, sort } = req.query
+    if (!limit) {
+      limit = 5
+    } else {
+      limit = parseInt(limit)
+    }
+    if (!page) {
+      page = 1
+    } else {
+      page = parseInt(page)
+    }
+    let searchValue = ''
+    let sortValue = ''
     if (typeof search === 'object') {
       // searchKey = Object.keys(search)[0]
       searchValue = Object.values(search)[0]
@@ -22,9 +30,111 @@ module.exports = {
       // searchKey = 'name'
       searchValue = search || ''
     }
-    offset = Number(offset)
-    console.log(offset)
-    const results = await News.findAll({
+    if (typeof sort === 'object') {
+      sortValue = Object.values(sort)[0]
+    } else {
+      sortValue = sort || 'createdAt'
+    }
+    try {
+      const { count, rows: results } = await News.findAndCountAll({
+        include: [{
+          model: Users,
+          as: 'Authors',
+          attributes: {
+            exclude: ['password', 'birthdate', 'email', 'phone', 'gender', 'role_id', 'createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Category,
+          as: 'Category',
+          attributes: {
+            exclude: ['createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Tags,
+          attributes: {
+            exclude: ['postId', 'createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Likes,
+          attributes: [
+            [
+              Sequelize.literal(`(
+                SELECT COUNT(id) FROM likes
+            )`),
+              'likesCount'
+            ]
+          ],
+          group: ['postId'],
+          limit: 1
+        }
+        ],
+        attributes: {
+          include: [
+            [
+              Sequelize.literal(`(
+              IF(LENGTH(content) > 28, CONCAT(SUBSTRING(content, 1, 200), "..."), content) 
+            )`),
+              'content'
+            ],
+            [
+              Sequelize.literal(`(
+              IF(LENGTH(title) > 28, CONCAT(SUBSTRING(title, 1, 70), "..."), title) 
+            )`),
+              'title'
+            ],
+            [
+              Sequelize.literal(`(
+                CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
+              )`),
+              'readEstimated'
+            ]
+          ],
+          exclude: ['content', 'title']
+        },
+        where: {
+          [Op.and]: [{
+            title: { [Op.like]: `%${searchValue}%` }
+          }, {
+            [Op.not]: [{
+              userId: id
+            }]
+          }]
+        },
+        limit: limit,
+        offset: (page - 1) * limit,
+        order: [
+          [sortValue, 'DESC']
+        ]
+      })
+      const pageInfo = pagination(req.baseUrl, req.query, page, limit, count)
+      return response(res, 'List of All News', { results, pageInfo })
+    } catch (e) {
+      return response(res, e.message, {}, 500, false)
+    }
+  },
+  readNewsDetail: async (req, res) => {
+    const { id } = req.params
+    const results = await News.findOne({
+      where: { id: id },
+      attributes: {
+        include: [
+          [
+            Sequelize.literal(`(
+              SELECT COUNT(id) FROM likes WHERE postId = ${id} GROUP BY postId
+          )`),
+            'likesCount'
+          ],
+          [
+            Sequelize.literal(`(
+              CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
+            )`),
+            'readEstimated'
+          ]
+        ]
+      },
       include: [{
         model: Users,
         as: 'Authors',
@@ -45,51 +155,125 @@ module.exports = {
           exclude: ['postId', 'createdAt', 'updatedAt']
         }
       }
-      ],
-      where: { title: { [Op.like]: `%${searchValue}%` } },
-      limit: limitData,
-      offset: offset,
-      order: [
-        ['id', 'asc']
       ]
     })
-    return response(res, 'List of All News', { results, pageInfo })
-  },
-  readNewsDetail: async (req, res) => {
-    const { id } = req.params
-    const results = await News.findAll({
-      where: { id: id },
-      include: [{
-        model: Users,
-        as: 'Authors',
-        attributes: {
-          exclude: ['password', 'birthdate', 'email', 'phone', 'gender', 'role_id', 'createdAt', 'updatedAt']
-        }
-      },
-      {
-        model: Category,
-        as: 'Category',
-        attributes: {
-          exclude: ['createdAt', 'updatedAt']
-        }
-      },
-      {
-        model: Tags,
-        attributes: {
-          exclude: ['postId', 'createdAt', 'updatedAt']
-        }
-      }]
-    })
-    if (results.length) {
+    if (results) {
+      const { readCount } = results.dataValues
+      results.update({ readCount: readCount + 1 })
       return response(res, `News detail ${id}`, { results })
     } else {
       return response(res, 'News Not found', {}, 404, false)
     }
   },
+  myNews: async (req, res) => {
+    const { id } = req.user
+    let { limit, page, search, sort } = req.query
+    if (!limit) {
+      limit = 5
+    } else {
+      limit = parseInt(limit)
+    }
+    if (!page) {
+      page = 1
+    } else {
+      page = parseInt(page)
+    }
+    let searchValue = ''
+    let sortValue = ''
+    if (typeof search === 'object') {
+      // searchKey = Object.keys(search)[0]
+      searchValue = Object.values(search)[0]
+    } else {
+      // searchKey = 'name'
+      searchValue = search || ''
+    }
+    if (typeof sort === 'object') {
+      sortValue = Object.values(sort)[0]
+    } else {
+      sortValue = sort || 'createdAt'
+    }
+    try {
+      const { count, rows: results } = await News.findAndCountAll({
+        include: [{
+          model: Users,
+          as: 'Authors',
+          attributes: {
+            exclude: ['password', 'birthdate', 'email', 'phone', 'gender', 'role_id', 'createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Category,
+          as: 'Category',
+          attributes: {
+            exclude: ['createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Tags,
+          attributes: {
+            exclude: ['postId', 'createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Likes,
+          attributes: [
+            [
+              Sequelize.literal(`(
+                SELECT COUNT(id) FROM likes
+            )`),
+              'likesCount'
+            ]
+          ],
+          group: ['postId'],
+          limit: 1
+        }
+        ],
+        attributes: {
+          include: [
+            [
+              Sequelize.literal(`(
+              IF(LENGTH(content) > 28, CONCAT(SUBSTRING(content, 1, 200), "..."), content) 
+            )`),
+              'content'
+            ],
+            [
+              Sequelize.literal(`(
+              IF(LENGTH(title) > 28, CONCAT(SUBSTRING(title, 1, 70), "..."), title) 
+            )`),
+              'title'
+            ],
+            [
+              Sequelize.literal(`(
+                CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
+              )`),
+              'readEstimated'
+            ]
+          ],
+          exclude: ['content', 'title']
+        },
+        where: {
+          [Op.and]: [{
+            title: { [Op.like]: `%${searchValue}%` }
+          }, {
+            userId: id
+          }]
+        },
+        limit: limit,
+        offset: (page - 1) * limit,
+        order: [
+          [sortValue, 'DESC']
+        ]
+      })
+      const pageInfo = pagination(req.baseUrl, req.query, page, limit, count)
+      return response(res, 'List of All My News', { results, pageInfo })
+    } catch (e) {
+      return response(res, e.message, {}, 500, false)
+    }
+  },
   createNews: (req, res) => {
     const { id } = req.user
     multerHelper(req, res, async function (err) {
-      const { title, content, categoryId, name, postId } = req.body // name, postId is from
+      const { title, content, tags } = req.body // name, postId is from
       try {
         if (err instanceof multer.MulterError) {
           if (err.code === 'LIMIT_UNEXPECTED_FILE' && req.files.length === 0) {
@@ -112,33 +296,21 @@ module.exports = {
           userId: Number(id),
           title,
           content,
-          categoryId,
           newsimage: image
         }
         try {
-          console.log(data)
           const results = await News.create({
             ...data
           })
 
-          // create transaction for tagsnews
-          const dataTags = {
-            name
-          }
-          let mytag = ''
-          for (let x = 0; x < dataTags.name.length; x++) {
-            const tags = dataTags.name[x]
-            mytag += tags + ', '
-            if (x === dataTags.name.length - 1) {
-              mytag = mytag.slice(0, mytag.length - 2)
-            }
-          }
-          const createTags = await Tags.create({
-            name: mytag,
-            postId: results.id
+          tags.forEach(async (el) => {
+            await Tags.create({
+              name: el,
+              postId: results.id
+            })
           })
-          console.log(createTags)
-          return response(res, 'News created successfully', { results })
+          console.log(tags)
+          return response(res, 'News created successfully', { })
         } catch (err) {
           return response(res, `${err.errors.map(e => e.message)}`, {}, 400, false)
         }
