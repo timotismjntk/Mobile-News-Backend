@@ -50,13 +50,18 @@ module.exports = {
       gender,
       role_id: 2
     }
-    const isExist = await Users.findOne({ where: { email: email } })
-    if (isExist) {
-      return response(res, 'Email has been used', 400, false)
-    } else {
-      console.log(data)
-      const results = await Users.create(data)
-      return response(res, 'User created successfully', { results })
+    try {
+      const isExist = await Users.findOne({ where: { email: email } })
+      if (!isExist) {
+        console.log(data)
+        const results = await Users.create(data)
+        return response(res, 'User created successfully', { results })
+      } else {
+        console.log(isExist)
+        return response(res, 'Error email has been used', { }, 400, false)
+      }
+    } catch (e) {
+      return response(res, e.message, {}, 500, false)
     }
   }
   //   forgotPassword: async (req, res) => {

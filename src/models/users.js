@@ -29,10 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       // }
     },
     birthdate: {
-      type: DataTypes.DATEONLY,
-      validate: {
-        isDate: true
-      }
+      type: DataTypes.STRING
     },
     email: {
       type: DataTypes.STRING,
