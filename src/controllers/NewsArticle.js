@@ -265,6 +265,111 @@ module.exports = {
       return response(res, e.message, {}, 500, false)
     }
   },
+  newsByOtherUser: async (req, res) => {
+    const { id } = req.params
+    let { limit, page, search, sort } = req.query
+    if (!limit) {
+      limit = 5
+    } else {
+      limit = parseInt(limit)
+    }
+    if (!page) {
+      page = 1
+    } else {
+      page = parseInt(page)
+    }
+    let searchValue = ''
+    let sortValue = ''
+    if (typeof search === 'object') {
+      // searchKey = Object.keys(search)[0]
+      searchValue = Object.values(search)[0]
+    } else {
+      // searchKey = 'name'
+      searchValue = search || ''
+    }
+    if (typeof sort === 'object') {
+      sortValue = Object.values(sort)[0]
+    } else {
+      sortValue = sort || 'createdAt'
+    }
+    try {
+      const { count, rows: results } = await News.findAndCountAll({
+        include: [{
+          model: Users,
+          as: 'Authors',
+          attributes: {
+            exclude: ['password', 'birthdate', 'email', 'phone', 'gender', 'role_id', 'createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Category,
+          as: 'Category',
+          attributes: {
+            exclude: ['createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Tags,
+          attributes: {
+            exclude: ['postId', 'createdAt', 'updatedAt']
+          }
+        },
+        {
+          model: Likes,
+          attributes: [
+            [
+              Sequelize.literal(`(
+                SELECT COUNT(id) FROM likes
+            )`),
+              'likesCount'
+            ]
+          ],
+          group: ['postId'],
+          limit: 1
+        }
+        ],
+        attributes: {
+          include: [
+            [
+              Sequelize.literal(`(
+              IF(LENGTH(content) > 28, CONCAT(SUBSTRING(content, 1, 200), "..."), content) 
+            )`),
+              'content'
+            ],
+            [
+              Sequelize.literal(`(
+              IF(LENGTH(title) > 28, CONCAT(SUBSTRING(title, 1, 70), "..."), title) 
+            )`),
+              'title'
+            ],
+            [
+              Sequelize.literal(`(
+                CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
+              )`),
+              'readEstimated'
+            ]
+          ],
+          exclude: ['content', 'title']
+        },
+        where: {
+          [Op.and]: [{
+            title: { [Op.like]: `%${searchValue}%` }
+          }, {
+            userId: id
+          }]
+        },
+        limit: limit,
+        offset: (page - 1) * limit,
+        order: [
+          [sortValue, 'DESC']
+        ]
+      })
+      const pageInfo = pagination(req.baseUrl, req.query, page, limit, count)
+      return response(res, `List of News by user ${id}`, { results, pageInfo })
+    } catch (e) {
+      return response(res, e.message, {}, 500, false)
+    }
+  },
   createNews: (req, res) => {
     const { id } = req.user
     multerHelper(req, res, async function (err) {
