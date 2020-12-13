@@ -26,7 +26,7 @@ module.exports = {
         })
         if (check) {
           await check.destroy()
-          return response(res, 'Like removed', {}, 400, false)
+          return response(res, 'Like removed', {}, 200, true)
         } else {
           await Likes.create(data)
           return response(res, 'Send liked successfully', {})

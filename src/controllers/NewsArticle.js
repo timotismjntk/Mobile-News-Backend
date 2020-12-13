@@ -3,7 +3,7 @@
 const response = require('../helpers/response')
 const { pagination } = require('../helpers/pagination')
 const { Op } = require('sequelize')
-const { News, Users, Category, Tags, Likes } = require('../models')
+const { News, Users, Category, Tags, Likes, Comments } = require('../models')
 const multer = require('multer')
 const Sequelize = require('sequelize')
 const multerHelper = require('../helpers/multerHelperMultiple')
@@ -58,17 +58,10 @@ module.exports = {
           }
         },
         {
-          model: Likes,
-          attributes: [
-            [
-              Sequelize.literal(`(
-                SELECT COUNT(id) FROM likes
-            )`),
-              'likesCount'
-            ]
-          ],
-          group: ['postId'],
-          limit: 1
+          model: Likes
+        },
+        {
+          model: Comments
         }
         ],
         attributes: {
@@ -94,15 +87,7 @@ module.exports = {
           ],
           exclude: ['content', 'title']
         },
-        where: {
-          [Op.and]: [{
-            title: { [Op.like]: `%${searchValue}%` }
-          }, {
-            [Op.not]: [{
-              userId: id
-            }]
-          }]
-        },
+        where: { title: { [Op.like]: `%${searchValue}%` } },
         limit: limit,
         offset: (page - 1) * limit,
         order: [
@@ -117,6 +102,7 @@ module.exports = {
   },
   readNewsDetail: async (req, res) => {
     const { id } = req.params
+    const {id: userId} = req.user
     const results = await News.findOne({
       where: { id: id },
       attributes: {
@@ -126,6 +112,12 @@ module.exports = {
               SELECT COUNT(id) FROM likes WHERE postId = ${id} GROUP BY postId
           )`),
             'likesCount'
+          ],
+          [
+            Sequelize.literal(`(
+              SELECT newsLiker from likes WHERE newsLiker = ${userId} AND postId = ${id}
+          )`),
+            'isLiked'
           ],
           [
             Sequelize.literal(`(
@@ -141,6 +133,9 @@ module.exports = {
         attributes: {
           exclude: ['password', 'birthdate', 'email', 'phone', 'gender', 'role_id', 'createdAt', 'updatedAt']
         }
+      },
+      {
+        model: Likes
       },
       {
         model: Category,
