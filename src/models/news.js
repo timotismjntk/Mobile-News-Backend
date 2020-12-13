@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   News.init({
     title: DataTypes.STRING,
-    content: DataTypes.STRING,
+    content: DataTypes.TEXT,
     categoryId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
     newsimage: DataTypes.STRING,

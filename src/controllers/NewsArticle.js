@@ -6,7 +6,7 @@ const { Op } = require('sequelize')
 const { News, Users, Category, Tags, Likes, Comments } = require('../models')
 const multer = require('multer')
 const Sequelize = require('sequelize')
-const multerHelper = require('../helpers/multerHelperMultiple')
+const multerHelper = require('../helpers/multerHelper')
 
 module.exports = {
   readAllNews: async (req, res) => {
@@ -91,7 +91,7 @@ module.exports = {
         limit: limit,
         offset: (page - 1) * limit,
         order: [
-          [sortValue, 'DESC']
+          sortValue === 'tags' ? [{ model: Tags }, 'id', 'DESC'] : [sortValue, 'DESC']
         ]
       })
       const pageInfo = pagination(req.baseUrl, req.query, page, limit, count)
@@ -102,7 +102,7 @@ module.exports = {
   },
   readNewsDetail: async (req, res) => {
     const { id } = req.params
-    const {id: userId} = req.user
+    const { id: userId } = req.user
     const results = await News.findOne({
       where: { id: id },
       attributes: {
@@ -271,27 +271,20 @@ module.exports = {
       const { title, content, tags } = req.body // name, postId is from
       try {
         if (err instanceof multer.MulterError) {
-          if (err.code === 'LIMIT_UNEXPECTED_FILE' && req.files.length === 0) {
-            console.log(err.code === 'LIMIT_UNEXPECTED_FILE' && req.files.length > 0)
+          if (err.code === 'LIMIT_UNEXPECTED_FILE' && req.file.length === 0) {
+            console.log(err.code === 'LIMIT_UNEXPECTED_FILE' && req.file.length > 0)
             return response(res, 'fieldname doesnt match', {}, 500, false)
           }
           return response(res, err.message, {}, 500, false)
         } else if (err) {
           return response(res, err.message, {}, 401, false)
         }
-        let image = ''
-        for (let x = 0; x < req.files.length; x++) {
-          const picture = `uploads/${req.files[x].filename}`
-          image += picture + ', '
-          if (x === req.files.length - 1) {
-            image = image.slice(0, image.length - 2)
-          }
-        }
+        const picture = `uploads/${req.file.filename}`
         const data = {
           userId: Number(id),
           title,
           content,
-          newsimage: image
+          newsimage: picture
         }
         try {
           const results = await News.create({
@@ -307,7 +300,7 @@ module.exports = {
           console.log(tags)
           return response(res, 'News created successfully', { })
         } catch (err) {
-          return response(res, `${err.errors.map(e => e.message)}`, {}, 400, false)
+          return response(res, err.message, {}, 400, false)
         }
       } catch (e) {
         return response(res, e.message, {}, 401, false)
