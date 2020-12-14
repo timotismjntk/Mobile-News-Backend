@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/auth')
 const NewsArticleController = require('../controllers/NewsArticle')
 // const uploadAvatar = require('../controllers/uploadAvatar')
 
-route.get('/', authMiddleware.authUser, NewsArticleController.readAllNews)
+route.get('/', NewsArticleController.readAllNews)
 route.get('/:id', authMiddleware.authUser, NewsArticleController.readNewsDetail)
 route.get('/my/all', authMiddleware.authUser, NewsArticleController.myNews)
 route.get('/other/:id', authMiddleware.authUser, NewsArticleController.newsByOtherUser)

@@ -79,9 +79,8 @@ module.exports = {
               'title'
             ],
             [
-              Sequelize.literal(`(
-                CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
-              )`),
+              Sequelize.literal(`
+                ((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200)`),
               'readEstimated'
             ]
           ],
@@ -120,9 +119,8 @@ module.exports = {
             'isLiked'
           ],
           [
-            Sequelize.literal(`(
-              CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
-            )`),
+            Sequelize.literal(`
+              ((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200)`),
             'readEstimated'
           ]
         ]
@@ -238,9 +236,8 @@ module.exports = {
               'title'
             ],
             [
-              Sequelize.literal(`(
-                CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
-              )`),
+              Sequelize.literal(`
+                ((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200)`),
               'readEstimated'
             ]
           ],
@@ -343,9 +340,8 @@ module.exports = {
               'title'
             ],
             [
-              Sequelize.literal(`(
-                CAST(((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200) AS DOUBLE(10, 1))
-              )`),
+              Sequelize.literal(`
+                ((LENGTH(content) - LENGTH(REPLACE(content, ' ', '')))/200)`),
               'readEstimated'
             ]
           ],
