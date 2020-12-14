@@ -14,7 +14,7 @@ app.use(cors())
 app.use('/uploads', express.static('assets/uploads'))
 
 const userRoute = require('./routes/Users')
-const authRoute = require('./routes/Auth')
+const authRoute = require('./routes/auth')
 const newsArticleRoute = require('./routes/NewsArticle')
 const categoryNewsRoute = require('./routes/CategoryNews')
 const tagNewsRoute = require('./routes/TagsNews')
