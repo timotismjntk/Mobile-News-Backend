@@ -1,3 +1,4 @@
+/* eslint-disable node/handle-callback-err */
 /* eslint-disable camelcase */
 const bcrypt = require('bcryptjs')
 const response = require('../helpers/response')
@@ -5,6 +6,7 @@ const { Users } = require('../models')
 const fs = require('fs')
 const multerHelper = require('../helpers/multerHelper')
 const multer = require('multer')
+const { Op } = require('sequelize')
 
 module.exports = {
   getAllUsers: async (req, res) => {
@@ -122,6 +124,31 @@ module.exports = {
         }
       }
     })
+  },
+  resetPassword: async (req, res) => {
+    const { email, newPassword } = req.body
+    try {
+      if (email) {
+        const check = await Users.findOne({
+          where: { email: email },
+          attributes: ['id', 'password']
+        })
+        if (check) {
+          try {
+            const salt = await bcrypt.genSalt()
+            const hashedPassword = await bcrypt.hash(newPassword, salt)
+            check.update({ password: hashedPassword })
+            return response(res, 'Password reset successfully', {})
+          } catch (e) {
+            return response(res, e.message, {}, 500, false)
+          }
+        } else {
+          return response(res, 'User not found', {}, 404, false)
+        }
+      }
+    } catch (e) {
+      return response(res, e.message, {}, 500, false)
+    }
   },
   deleteUser: async (req, res) => {
     const { id } = req.user

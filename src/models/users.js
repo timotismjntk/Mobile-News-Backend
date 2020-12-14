@@ -50,7 +50,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     gender: DataTypes.ENUM('Male', 'Female'),
     role_id: DataTypes.INTEGER,
-    avatar: DataTypes.STRING
+    avatar: DataTypes.STRING,
+    resetCode: DataTypes.STRING
     // avatar: {
     //   type: DataTypes.STRING,
     //   allowNull: false,

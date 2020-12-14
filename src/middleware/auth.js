@@ -34,7 +34,7 @@ module.exports = {
     const { authorization } = req.headers
     const token = authorization.slice(7, authorization.length)
     try {
-      const payload = await jwt.verify(token, APP_KEY)
+      const payload = await jwt.verify(token, process.env.APP_KEY)
       if (payload) {
         console.log('token still valid')
         return response(res, 'token still valid', { payload })

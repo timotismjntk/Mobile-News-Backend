@@ -3,6 +3,8 @@ const { Users } = require('../models')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const response = require('../helpers/response')
+const { v4: uuidv4 } = require('uuid')
+const { Op } = require('sequelize')
 const {
   APP_KEY,
   TOKEN_EXP
@@ -63,33 +65,43 @@ module.exports = {
     } catch (e) {
       return response(res, e.message, {}, 500, false)
     }
+  },
+  getResetCode: async (req, res) => {
+    const { email } = req.body
+    const isExist = await Users.findOne({ where: { email } })
+    if (isExist) {
+      let resetCode = uuidv4()
+      resetCode = resetCode.slice(0, 6)
+      const sendResetCode = await isExist.update({ resetCode: resetCode })
+      if (sendResetCode) {
+        return response(res, 'Reset Code sent successfully', { result: resetCode })
+      }
+    } else {
+      return response(res, 'Email isn\'t registered', {}, 404)
+    }
+  },
+  resetPasswordVerifiyResetCode: async (req, res) => {
+    const { resetCode, email } = req.body
+    try {
+      const isResetCodeMatch = await Users.findOne({
+        where: {
+          [Op.and]: [
+            {
+              email: email
+            },
+            {
+              resetCode: resetCode
+            }
+          ]
+        }
+      })
+      if (isResetCodeMatch) {
+        return response(res, 'Reset Code is Same', {})
+      } else {
+        return response(res, 'Reset Code doesn\'t Same', {}, 400)
+      }
+    } catch (e) {
+      return response(res, e.message, {}, 500, false)
+    }
   }
-  //   forgotPassword: async (req, res) => {
-  //     const schema = joi.object({
-  //       password: joi.string().required()
-  //     })
-
-//     let { value: results, error } = schema.validate(req.body)
-//     if (error) {
-//       return response(res, 'Error', { error: error.message }, 400, false)
-//     } else {
-//       const { email, password } = results
-//       try {
-//         const isExist = await authModel.checkUserExist({ email })
-//         if (isExist.length > 0) {
-//           const salt = await bcrypt.genSalt(10)
-//           const hashedPassword = await bcrypt.hash(password, salt)
-//           results = {
-//             password: hashedPassword
-//           }
-//           const data = await authModel.signUp(results)
-//           if (data.affectedRows) {
-//             return response(res, 'Success to change password', { results }, 200, true)
-//           }
-//         }
-//       } catch (e) {
-//         return response(res, e.message, {}, 500, false)
-//       }
-//     }
-//   }
 }
