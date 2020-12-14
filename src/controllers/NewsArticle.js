@@ -108,13 +108,13 @@ module.exports = {
         include: [
           [
             Sequelize.literal(`(
-              SELECT COUNT(id) FROM likes WHERE postId = ${id} GROUP BY postId
+              SELECT COUNT(id) FROM Likes WHERE postId = ${id} GROUP BY postId
           )`),
             'likesCount'
           ],
           [
             Sequelize.literal(`(
-              SELECT newsLiker from likes WHERE newsLiker = ${userId} AND postId = ${id}
+              SELECT newsLiker from Likes WHERE newsLiker = ${userId} AND postId = ${id}
           )`),
             'isLiked'
           ],
@@ -212,7 +212,7 @@ module.exports = {
           attributes: [
             [
               Sequelize.literal(`(
-                SELECT COUNT(id) FROM likes
+                SELECT COUNT(id) FROM Likes
             )`),
               'likesCount'
             ]
@@ -316,7 +316,7 @@ module.exports = {
           attributes: [
             [
               Sequelize.literal(`(
-                SELECT COUNT(id) FROM likes
+                SELECT COUNT(id) FROM Likes
             )`),
               'likesCount'
             ]
