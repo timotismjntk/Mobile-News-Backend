@@ -380,14 +380,14 @@ module.exports = {
         } else if (err) {
           return response(res, err.message, {}, 401, false)
         }
-        const picture = `uploads/${req.file.filename}`
-        const data = {
-          userId: Number(id),
-          title,
-          content,
-          newsimage: picture
-        }
-        try {
+        if (req.file) {
+          const picture = `uploads/${req.file.filename}`
+          const data = {
+            userId: Number(id),
+            title,
+            content,
+            newsimage: picture
+          }
           const results = await News.create({
             ...data
           })
@@ -400,8 +400,24 @@ module.exports = {
           })
           console.log(tags)
           return response(res, 'News created successfully', { })
-        } catch (err) {
-          return response(res, err.message, {}, 400, false)
+        } else {
+          const data = {
+            userId: Number(id),
+            title,
+            content
+          }
+          const results = await News.create({
+            ...data
+          })
+
+          tags.forEach(async (el) => {
+            await Tags.create({
+              name: el,
+              postId: results.id
+            })
+          })
+          console.log(tags)
+          return response(res, 'News created successfully', { })
         }
       } catch (e) {
         return response(res, e.message, {}, 401, false)
