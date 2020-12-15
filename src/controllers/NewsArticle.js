@@ -392,14 +392,23 @@ module.exports = {
             ...data
           })
 
-          tags.forEach(async (el) => {
+          if (typeof tags !== 'string') {
+            tags.forEach(async (el) => {
+              await Tags.create({
+                name: el,
+                postId: results.id
+              })
+            })
+            console.log(tags)
+            return response(res, 'News created successfully', { })
+          } else {
             await Tags.create({
-              name: el,
+              name: tags,
               postId: results.id
             })
-          })
-          console.log(tags)
-          return response(res, 'News created successfully', { })
+            console.log(tags)
+            return response(res, 'News created successfully', { })
+          }
         } else {
           const data = {
             userId: Number(id),
@@ -410,14 +419,23 @@ module.exports = {
             ...data
           })
 
-          tags.forEach(async (el) => {
+          if (typeof tags !== 'string') {
+            tags.forEach(async (el) => {
+              await Tags.create({
+                name: el,
+                postId: results.id
+              })
+            })
+            console.log(tags)
+            return response(res, 'News created successfully', { })
+          } else {
             await Tags.create({
-              name: el,
+              name: tags,
               postId: results.id
             })
-          })
-          console.log(tags)
-          return response(res, 'News created successfully', { })
+            console.log(tags)
+            return response(res, 'News created successfully', { })
+          }
         }
       } catch (e) {
         return response(res, e.message, {}, 401, false)
