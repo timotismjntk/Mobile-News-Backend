@@ -11,6 +11,7 @@ const multerHelper = require('../helpers/multerHelper')
 module.exports = {
   readAllNews: async (req, res) => {
     let { limit, page, search, sort } = req.query
+    const { id: userId } = req.user
     if (!limit) {
       limit = 5
     } else {
