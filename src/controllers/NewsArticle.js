@@ -81,7 +81,7 @@ module.exports = {
             ],
             [
               Sequelize.literal(`(
-                IF(newsLiker = ${userId}, true, false)
+                IF(News.newsLiker = ${userId}, true, false)
             )`),
               'isLiked'
             ],
