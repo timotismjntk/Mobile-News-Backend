@@ -11,7 +11,6 @@ const multerHelper = require('../helpers/multerHelper')
 module.exports = {
   readAllNews: async (req, res) => {
     let { limit, page, search, sort } = req.query
-    const { id: userId } = req.user
     if (!limit) {
       limit = 5
     } else {
@@ -62,6 +61,9 @@ module.exports = {
           model: Likes
         },
         {
+          model: Likes
+        },
+        {
           model: Comments
         }
         ],
@@ -78,12 +80,6 @@ module.exports = {
               IF(LENGTH(title) > 28, CONCAT(SUBSTRING(title, 1, 70), "..."), title) 
             )`),
               'title'
-            ],
-            [
-              Sequelize.literal(`(
-                IF(Likes.newsLiker = ${userId}, true, false) from Likes
-                )`),
-              'isLiked'
             ],
             [
               Sequelize.literal(`
