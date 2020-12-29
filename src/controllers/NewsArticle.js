@@ -59,17 +59,7 @@ module.exports = {
           }
         },
         {
-          model: Likes,
-          attributes: {
-            include: [
-              [
-                Sequelize.literal(`(
-                IF(Likes.newsLiker = ${userId}, true, false)
-              )`),
-                'isLiked'
-              ]
-            ]
-          }
+          model: Likes
         },
         {
           model: Comments
@@ -88,6 +78,12 @@ module.exports = {
               IF(LENGTH(title) > 28, CONCAT(SUBSTRING(title, 1, 70), "..."), title) 
             )`),
               'title'
+            ],
+            [
+              Sequelize.literal(`(
+                  IF(Likes.newsLiker = ${userId}, true, false)
+                )`),
+              'isLiked'
             ],
             [
               Sequelize.literal(`
