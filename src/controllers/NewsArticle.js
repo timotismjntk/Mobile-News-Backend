@@ -61,12 +61,10 @@ module.exports = {
         {
           model: Likes,
           attributes: [
-            [
-              Sequelize.literal(`(
-                SELECT newsLiker from Likes WHERE newsLiker = ${userId}
-            )`),
-              'isLiked'
-            ]
+            Sequelize.literal(`(
+              SELECT newsLiker from Likes WHERE newsLiker = ${userId}
+          )`),
+            'isLiked'
           ]
         },
         {
