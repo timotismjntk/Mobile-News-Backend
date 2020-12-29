@@ -68,9 +68,6 @@ module.exports = {
           ]
         },
         {
-          model: Likes
-        },
-        {
           model: Comments
         }
         ],
