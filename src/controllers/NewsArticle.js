@@ -60,12 +60,14 @@ module.exports = {
         },
         {
           model: Likes,
-          attributes: [
-            Sequelize.literal(`(
-              SELECT newsLiker from Likes WHERE newsLiker = ${userId}
-          )`),
-            'isLiked'
-          ]
+          attributes: {
+            include: [
+              Sequelize.literal(`(
+                SELECT newsLiker from Likes WHERE newsLiker = ${userId}
+            )`),
+              'isLiked'
+            ]
+          }
         },
         {
           model: Comments
