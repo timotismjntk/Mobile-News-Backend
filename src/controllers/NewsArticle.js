@@ -62,10 +62,12 @@ module.exports = {
           model: Likes,
           attributes: {
             include: [
-              Sequelize.literal(`(
-                IF(newsLiker = ${userId}, true, false)
-            )`),
-              'isLiked'
+              [
+                Sequelize.literal(`(
+                  IF(newsLiker = ${userId}, true, false)
+              )`),
+                'isLiked'
+              ]
             ]
           }
         },
