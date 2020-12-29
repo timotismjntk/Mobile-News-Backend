@@ -58,7 +58,15 @@ module.exports = {
           }
         },
         {
-          model: Likes
+          model: Likes,
+          attributes: [
+            [
+              Sequelize.literal(`(
+                SELECT newsLiker from Likes WHERE newsLiker = ${userId}
+            )`),
+              'isLiked'
+            ]
+          ]
         },
         {
           model: Likes
