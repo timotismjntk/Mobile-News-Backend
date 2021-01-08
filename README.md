@@ -46,6 +46,7 @@
 ## About The Project
 
 This is Backend for mobile App RuangDev.
+RuangDev is 
 
 ### Built With
 
@@ -67,7 +68,7 @@ This is Backend for mobile App RuangDev.
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
-### Prerequisites
+## Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
 * npm
@@ -85,17 +86,14 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    yarn install
    ```
+<!-- API -->
+## Api Docs
+See the route of Api with [Postman Docs API](https://www.getpostman.com/collections/ed46341b75cd9a101d38)
 
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
+Click and run on Postman, [Open on Postman](https://explore.postman.com/templates/3884)
 
 <!-- CONTACT -->
 ## Contact
-Email: [timoticrew@gmail.com](timoticrew@gmail.com)
-<Br/>
 Project Link: [https://github.com/timotismjntk/Mobile-News-Backend](https://github.com/timotismjntk/Mobile-News-Backend)
 
 
@@ -107,4 +105,3 @@ Project Link: [https://github.com/timotismjntk/Mobile-News-Backend](https://gith
 [stars-url]: https://github.com/timotismjntk/Mobile-News-Backend/stargazers
 [issues-shield]: https://img.shields.io/github/issues/timotismjntk/Mobile-News-Backend
 [issues-url]: https://github.com/timotismjntk/Mobile-News-Backend/issues
-[product-screenshot]: images/screenshot.png
