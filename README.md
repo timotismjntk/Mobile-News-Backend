@@ -35,7 +35,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#Api Docs">Api Docs</a></li>
+    <li><a href="#api-docs">Api Docs</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
