@@ -19,27 +19,24 @@
 
 
 <!-- TABLE OF CONTENTS -->
-<details open="open">
-  <h2>Table of Contents</h2>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#api-docs">Api Docs</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ol>
-</details>
-
+<h2>Table of Contents</h2>
+<ol>
+  <li>
+    <a href="#about-the-project">About The Project</a>
+    <ul>
+      <li><a href="#built-with">Built With</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="#getting-started">Getting Started</a>
+    <ul>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#installation">Installation</a></li>
+    </ul>
+  </li>
+  <li><a href="#api-docs">Api Docs</a></li>
+  <li><a href="#contact">Contact</a></li>
+</ol>
 
 
 <!-- ABOUT THE PROJECT -->
