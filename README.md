@@ -68,9 +68,9 @@ To get a local copy up and running follow these simple example steps.
 ## Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+* yarn
   ```sh
-  npm install npm@latest -g
+  npm install -g yarn
   ```
 
 ### Installation
@@ -79,7 +79,7 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/timotismjntk/Mobile-News-Backend.git
    ```
-2. Install YARN packages
+2. Install Depedencies
    ```sh
    yarn install
    ```
