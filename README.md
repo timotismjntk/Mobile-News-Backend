@@ -20,7 +20,7 @@
 
 <!-- TABLE OF CONTENTS -->
 <h2>Table of Contents</h2>
-<ol>
+<ul>
   <li>
     <a href="#about-the-project">About The Project</a>
     <ul>
@@ -36,7 +36,7 @@
   </li>
   <li><a href="#api-docs">Api Docs</a></li>
   <li><a href="#contact">Contact</a></li>
-</ol>
+</ul>
 
 
 <!-- ABOUT THE PROJECT -->
