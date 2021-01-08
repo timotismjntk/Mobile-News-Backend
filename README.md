@@ -20,7 +20,7 @@
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
-  <summary>Table of Contents</summary>
+  <h2>Table of Contents</h2>
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
@@ -89,8 +89,6 @@ This is an example of how to list things you need to use the software and how to
 <!-- API -->
 ## Api Docs
 See the route of Api with [Postman Docs API](https://www.getpostman.com/collections/ed46341b75cd9a101d38)
-
-Click and run on Postman, [Open on Postman](https://explore.postman.com/templates/3884)
 
 <!-- CONTACT -->
 ## Contact
