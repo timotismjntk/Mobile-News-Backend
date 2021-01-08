@@ -6,7 +6,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/timotismjntk/Mobile-News-Backend">
-    <img src="https://raw.githubusercontent.com/timotismjntk/RuangDev/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="Logo" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/timotismjntk/RuangDev/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="Logo" width="120" height="120">
   </a>
 
   <h3 align="center">Ruang Dev - Backend</h3>
