@@ -81,6 +81,18 @@ This is list things you need to use the packages and how to install them.
    ```sh
    yarn install
    ```
+3. Create Database with sequelize
+   ```sh
+   yarn sequelize db:create
+   ```
+4. Create Migration with sequelize
+   ```sh
+   yarn sequelize db:migrate
+   ```
+5. Run Project
+   ```sh
+   nodemon
+   ```
 <!-- API -->
 ## Api Docs
 See the route of Api with [Postman Docs API](https://www.getpostman.com/collections/ed46341b75cd9a101d38)
